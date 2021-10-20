@@ -32,9 +32,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
+  spec.add_dependency "activesupport"
   spec.add_dependency "ferrum"
   spec.add_dependency "httparty"
-  spec.add_dependency "activesupport"
 
   spec.add_development_dependency "debug"
   # For more information and examples about making a new gem, checkout our

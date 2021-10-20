@@ -1,21 +1,21 @@
 module Echo360DL
   class Downloader
-    attr_accessor :url, :filename, :prefix, :response, :cookies
+    attr_accessor :url, :filename, :prefix, :responses, :cookies
 
     def initialize(url, filename: nil, prefix: "", cookies: {})
       @url = url
       @prefix = prefix
       @filename = @prefix + (filename || @url[%r{[^/]+.m4s}]).gsub("m4s", "mp4")
       @cookies = cookies
-      @response = nil
+      @responses = nil
     end
 
     def download
-      puts "download #{filename}"
-      puts "skipping" and return if @response&.success?
+      puts filename.to_s
+      puts "skipping" and return if @responses&.success?
 
       File.open(filename, "w") do |file|
-        @response = HTTParty.get(url, cookies: cookies, stream_body: true) do |fragment|
+        @responses = HTTParty.get(url, cookies: cookies, stream_body: true) do |fragment|
           if [301, 302].include?(fragment.code)
             print "skip writing for redirect"
           elsif fragment.code == 200
@@ -27,7 +27,7 @@ module Echo360DL
         end
       end
       puts
-      puts "Success: #{@response&.success?}"
+      puts "Success: #{@responses&.success?}"
       puts File.stat(filename).inspect
     end
   end
