@@ -5,12 +5,12 @@ module Echo360DL
     def initialize(url, filename: nil, prefix: "", cookies: {})
       @url = url
       @prefix = prefix
-      @filename = @prefix + (filename || @url[%r{[^/]+.m4s}]).gsub("m4s", "mp4")
+      @filename = @prefix + (filename || @url[%r{[^/]+.m4s}])
       @cookies = cookies
       @responses = nil
     end
 
-    def download
+    def process
       puts filename.to_s
       if @responses&.success?
         puts "skipping"

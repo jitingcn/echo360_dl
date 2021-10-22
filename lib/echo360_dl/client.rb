@@ -5,7 +5,7 @@ module Echo360DL
     attr_reader :browser, :tasks
 
     def initialize(headless: true)
-      @browser = Ferrum::Browser.new timeout: 60, headless: headless
+      @browser = Ferrum::Browser.new timeout: 60, browser_options: { "no-sandbox": nil }, headless: headless
       @tasks = []
     end
 
@@ -14,11 +14,11 @@ module Echo360DL
     end
 
     def goto(url)
+      browser.goto "about:blank"
+      browser.network.clear(:traffic)
       puts "visiting #{url}"
       browser.go_to url
-      sleep 1
-      browser.at_css("div[data-test-component='MediaInfoOverlay']").click
-      sleep 1
+      sleep 2
     end
 
     def traffic
@@ -51,11 +51,12 @@ module Echo360DL
     end
 
     def add_task
-      puts "add task for #{title}"
+      print "add task for #{title} "
       Dir.mkdir("download") unless File.directory?("download")
-      media.each do |link|
+      count = media.each do |link|
         tasks << Echo360DL::Downloader.new(link, prefix: "download/#{"#{title}-".gsub(%r{[/\\:*?"<>|]}, "_")}")
-      end
+      end.size
+      puts "(#{count})"
       # if transcript
       #   @downloads << Echo360DL::Downloader.new(transcript, filename: "#{title}-transcript.vtt",
       #                                                       prefix: "download/", cookies: cookies)
@@ -63,7 +64,7 @@ module Echo360DL
     end
 
     def download_all
-      tasks.each(&:download)
+      tasks.each(&:process)
     end
 
     def make_aria2_list(filename: "aria2.txt")
