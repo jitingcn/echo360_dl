@@ -66,6 +66,15 @@ module Echo360DL
       tasks.each(&:download)
     end
 
+    def make_aria2_list(filename: "aria2.txt")
+      File.open(filename, "w") do |f|
+        tasks.each do |task|
+          f.write("#{task.url}\n  out=#{File.basename task.filename}\n")
+        end
+      end
+      nil
+    end
+
     def cookies
       browser.cookies.all.values.map do |c|
         { "#{c.name}": c.value }
