@@ -12,7 +12,10 @@ module Echo360DL
 
     def download
       puts filename.to_s
-      puts "skipping" and return if @responses&.success?
+      if @responses&.success?
+        puts "skipping"
+        return
+      end
 
       progressbar = ProgressBar.create(starting_at: 0, total: nil, format: "Progress: %c |%B| %a", length: 80)
       File.open(filename, "w") do |file|
