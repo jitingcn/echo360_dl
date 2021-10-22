@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "httparty"
+require "ruby-progressbar"
 require "active_support"
 require "active_support/all"
 

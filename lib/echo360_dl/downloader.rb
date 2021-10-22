@@ -14,18 +14,20 @@ module Echo360DL
       puts filename.to_s
       puts "skipping" and return if @responses&.success?
 
+      progressbar = ProgressBar.create(starting_at: 0, total: nil, format: "Progress: %c |%B| %a", length: 80)
       File.open(filename, "w") do |file|
         @responses = HTTParty.get(url, cookies: cookies, stream_body: true) do |fragment|
           if [301, 302].include?(fragment.code)
             print "skip writing for redirect"
           elsif fragment.code == 200
-            print "."
             file.write(fragment)
+            progressbar.increment
           else
             raise StandardError, "Non-success status code while streaming #{fragment.code}"
           end
         end
       end
+      progressbar.finish
       puts
       puts "Success: #{@responses&.success?}"
       puts File.stat(filename).inspect
