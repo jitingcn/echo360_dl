@@ -32,13 +32,16 @@ urls = %w[
 ]
 
 urls.each do |url|
-  cli.goto url
-  cli.add_task
+  cli.add_page url
 end
 
 begin
+  cli.process
+  # make aria2 download list 
+  # usage: `aria2c -i aria2.txt --max-concurrent-downloads=5`
+  cli.make_aria2_list
   cli.download_all
-rescue
+rescue StandardError
   binding.irb
 end
 
