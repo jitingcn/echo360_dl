@@ -12,7 +12,7 @@ module Echo360DL
 
     def process
       puts filename.to_s
-      if @responses&.success?
+      if @responses&.success? || File.exist?(filename)
         puts "skipping"
         return
       end
@@ -31,9 +31,8 @@ module Echo360DL
         end
       end
       progressbar.finish
-      puts
       puts "Success: #{@responses&.success?}"
-      puts File.stat(filename).inspect
+      puts File.stat(filename).size
     end
   end
 end
